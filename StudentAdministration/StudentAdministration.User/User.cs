@@ -96,9 +96,21 @@ namespace StudentAdministration.User
 
         #region IUserImplementation
 
-        public Task<UserUpdateResponseModel> Update(UserUpdateRequestModel? model)
+        public async Task<UserUpdateResponseModel> Update(UserUpdateRequestModel? model)
         {
-            throw new NotImplementedException();
+            var user = await _tableClient.GetEntityIfExistsAsync<TableEntity>(model?.PartitionKey, model?.Id);
+
+            if (!user.HasValue)
+            {
+                return null!;
+            }
+
+            user.Value!["FirstName"] = model?.FirstName;
+            user.Value!["LastName"] = model?.LastName;
+
+            await _tableClient.UpsertEntityAsync(user.Value);
+
+            return new UserUpdateResponseModel();
         }
 
         public Task<UserGetByIdResponseModel> GetById(string? userId)
