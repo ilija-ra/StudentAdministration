@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentAdministration.User"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentAdministration.Subject", "StudentAdministration.Subject\StudentAdministration.Subject.csproj", "{9D98AF2F-F9AF-41B4-A6C4-0A68CCAC362B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{3C77A293-399E-46F2-845A-C4DD3008F7CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{3C77A293-399E-46F2-845A-C4DD3008F7CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
