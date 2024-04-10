@@ -12,18 +12,15 @@ using System.Text;
 
 namespace StudentAdministration.User
 {
-    /// <summary>
-    /// An instance of this class is created for each service instance by the Service Fabric runtime.
-    /// </summary>
     internal sealed class User : StatelessService, IUser, IAccount
     {
-        public User(StatelessServiceContext context)
-            : base(context)
-        { }
-
         private const string _connectionString = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
         private static TableServiceClient _serviceClient = new TableServiceClient(_connectionString);
         private static TableClient _tableClient = _serviceClient.GetTableClient("Users");
+
+        public User(StatelessServiceContext context)
+            : base(context)
+        { }
 
         #region IAccountImplementation
 
@@ -136,12 +133,11 @@ namespace StudentAdministration.User
         {
             try
             {
-                var profId1 = Guid.NewGuid().ToString();
                 (string hashedPassword1, string salt1) = PasswordHasher.HashPassword("Proba.123");
 
-                await _tableClient.UpsertEntityAsync(new TableEntity(AssignToPartition(profId1).ToString(), profId1)
+                await _tableClient.UpsertEntityAsync(new TableEntity("1", "a524095a-0688-487b-8b73-cc28f084cfd9")
                 {
-                    { "Id", profId1 },
+                    { "Id", "a524095a-0688-487b-8b73-cc28f084cfd9" },
                     { "FirstName", "Samantha" },
                     { "LastName", "Rodriguez" },
                     { "Index", null },
@@ -151,12 +147,11 @@ namespace StudentAdministration.User
                     { "Role", "Professor" }
                 });
 
-                var profId2 = Guid.NewGuid().ToString();
                 (string hashedPassword2, string salt2) = PasswordHasher.HashPassword("Proba.123");
 
-                await _tableClient.UpsertEntityAsync(new TableEntity(AssignToPartition(profId2).ToString(), profId2)
+                await _tableClient.UpsertEntityAsync(new TableEntity("1", "0e9c175c-e9ac-4863-9747-7cf26ca4c8de")
                 {
-                    { "Id", profId2 },
+                    { "Id", "0e9c175c-e9ac-4863-9747-7cf26ca4c8de" },
                     { "FirstName", "Benjamin" },
                     { "LastName", "Hayes" },
                     { "Index", null },
@@ -192,19 +187,11 @@ namespace StudentAdministration.User
 
         #endregion
 
-        /// <summary>
-        /// Optional override to create listeners (e.g., TCP, HTTP) for this service replica to handle client or user requests.
-        /// </summary>
-        /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
             return this.CreateServiceRemotingInstanceListeners();
         }
 
-        /// <summary>
-        /// This is the main entry point for your service instance.
-        /// </summary>
-        /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service instance.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
             await InitializeTable();
