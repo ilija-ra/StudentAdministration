@@ -36,6 +36,9 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Client\Client.csproj">
+      <ServiceLaunchUrl>http://localhost:{ServicePort}/</ServiceLaunchUrl>
+    </ProjectReference>
     <ProjectReference Include="..\StudentAdministration.Api\StudentAdministration.Api.csproj">
       <ServiceLaunchUrl>http://localhost:{ServicePort}/swagger</ServiceLaunchUrl>
     </ProjectReference>
