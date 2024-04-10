@@ -10,14 +10,18 @@ namespace StudentAdministration.Api.Controllers
     public class UsersController : ControllerBase
     {
         [HttpGet]
-        [Route("GetById/{userId}")]
-        public async Task<IActionResult> GetById(string userId)
+        [Route("GetById")]
+        public async Task<IActionResult> GetById(string userId, string userPartitionKey)
         {
-            //var userManagementProxy = ServiceProxy.Create<IUserManagement>(new Uri("fabric:/StudentAdministration/StudentAdministration.User"));
-            //var result = await userManagementProxy.UserGetById(userId);
+            var userProxy = ServiceProxy.Create<IUser>(new Uri("fabric:/StudentAdministration/StudentAdministration.User"));
+            var result = await userProxy.GetById(userId, userPartitionKey);
 
-            //return Ok(result);
-            return Ok();
+            if (result is null)
+            {
+                return BadRequest("Error occured during this action!");
+            }
+
+            return Ok(result);
         }
 
         [HttpPut]
@@ -36,10 +40,18 @@ namespace StudentAdministration.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetInitials/{userId}")]
-        public async Task<IResult> GetInitials(string userId)
+        [Route("GetInitials")]
+        public async Task<IActionResult> GetInitials(string userId, string userPartitionKey)
         {
-            return Results.Ok();
+            var userProxy = ServiceProxy.Create<IUser>(new Uri("fabric:/StudentAdministration/StudentAdministration.User"));
+            var result = await userProxy.GetInitials(userId, userPartitionKey);
+
+            if (result is null)
+            {
+                return BadRequest("Error occured during this action!");
+            }
+
+            return Ok(result);
         }
     }
 }

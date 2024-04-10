@@ -11,5 +11,7 @@
         public string? Index { get; set; }
 
         public string? EmailAddress { get; set; }
+
+        public string? PartitionKey { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using OnlineStore.Communication.Account;
 using StudentAdministration.Communication.Accounts.Models;
 using StudentAdministration.Communication.Users;
 using StudentAdministration.Communication.Users.Models;
+using StudentAdministration.User.Entities;
 using System.Fabric;
 using System.Security.Cryptography;
 using System.Text;
@@ -110,14 +111,49 @@ namespace StudentAdministration.User
             return new UserUpdateResponseModel();
         }
 
-        public Task<UserGetByIdResponseModel> GetById(string? userId)
+        public async Task<UserGetByIdResponseModel> GetById(string? userId, string userPartitionKey)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var query = _tableClient.QueryAsync<UserEntity>(x => x.Id == userId && x.PartitionKey == userPartitionKey);
+
+                var user = query!.ToBlockingEnumerable().FirstOrDefault();
+
+                return new UserGetByIdResponseModel()
+                {
+                    Id = user!.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Index = user.Index,
+                    EmailAddress = user.EmailAddress,
+                    PartitionKey = user.PartitionKey
+                };
+            }
+            catch
+            {
+                return null!;
+            }
         }
 
-        public Task<UserGetInitialsResponseModel> GetInitials(string? userId)
+        public async Task<UserGetInitialsResponseModel> GetInitials(string? userId, string userPartitionKey)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var query = _tableClient.QueryAsync<UserEntity>(x => x.Id == userId && x.PartitionKey == userPartitionKey);
+
+                var user = query!.ToBlockingEnumerable().FirstOrDefault();
+
+                return await Task.FromResult(new UserGetInitialsResponseModel()
+                {
+                    Id = user!.Id,
+                    EmailAddress = user.EmailAddress,
+                    Initials = string.Concat(user.FirstName?.First(), user.LastName?.First())
+                });
+            }
+            catch
+            {
+                return null!;
+            }
         }
 
         #endregion
@@ -197,16 +233,16 @@ namespace StudentAdministration.User
             await InitializeTable();
             await PopulateProfessors();
 
-            long iterations = 0;
+            //long iterations = 0;
 
-            while (true)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
+            //while (true)
+            //{
+            //    cancellationToken.ThrowIfCancellationRequested();
 
-                ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
+            //    ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            }
+            //    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+            //}
         }
     }
 }

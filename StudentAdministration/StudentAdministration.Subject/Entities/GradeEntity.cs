@@ -15,13 +15,13 @@ namespace StudentAdministration.Subject.Entities
 
         public string? StudentPartitionKey { get; set; }
 
-        public string? PartitionKey { get; set; }
-
         public string? ProfessorFullName { get; set; }
 
         public string? StudentFullName { get; set; }
 
         public int? Grade { get; set; }
+
+        public string? PartitionKey { get; set; }
 
         public string? RowKey { get; set; }
 
