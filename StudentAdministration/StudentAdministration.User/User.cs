@@ -27,42 +27,42 @@ namespace StudentAdministration.User
 
         public async Task<AccountLoginResponseModel> Login(AccountLoginRequestModel? model)
         {
-            TableEntity foundUser = null!;
-            var users = _tableClient.QueryAsync<TableEntity>();
+            var query = _tableClient.QueryAsync<UserEntity>(x => x.EmailAddress == model!.EmailAddress);
+            var user = query?.ToBlockingEnumerable().FirstOrDefault();
 
-            await foreach (var user in users)
-            {
-                if (user["EmailAddress"].ToString() == model?.EmailAddress)
-                {
-                    foundUser = user;
-                }
-            }
-
-            if (foundUser is null)
+            if (user is null)
             {
                 return null!;
             }
 
-            if (!PasswordHasher.VerifyPassword(foundUser["Password"].ToString()!, foundUser["Salt"].ToString()!, model?.Password!))
+            if (!PasswordHasher.VerifyPassword(user.Password!, user.Salt!, model?.Password!))
             {
                 return null!;
             }
 
-            return new AccountLoginResponseModel() { JwtToken = null };
+            return new AccountLoginResponseModel()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Index = user.Index ?? string.Empty,
+                EmailAddress = user.EmailAddress,
+                Role = user.Role,
+                PartitionKey = user.PartitionKey,
+                JwtToken = null
+            };
         }
 
         public async Task<AccountRegisterResponseModel> Register(AccountRegisterRequestModel? model)
         {
             try
             {
-                var users = _tableClient.QueryAsync<TableEntity>();
+                var query = _tableClient.QueryAsync<UserEntity>(x => x.EmailAddress == model!.EmailAddress);
+                var user = query?.ToBlockingEnumerable().FirstOrDefault();
 
-                await foreach (var user in users)
+                if (user != null)
                 {
-                    if (user["EmailAddress"].ToString() == model?.EmailAddress)
-                    {
-                        return null!;
-                    }
+                    return null!;
                 }
 
                 model!.Id = Guid.NewGuid().ToString();
@@ -232,17 +232,6 @@ namespace StudentAdministration.User
         {
             await InitializeTable();
             await PopulateProfessors();
-
-            //long iterations = 0;
-
-            //while (true)
-            //{
-            //    cancellationToken.ThrowIfCancellationRequested();
-
-            //    ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
-
-            //    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            //}
         }
     }
 }

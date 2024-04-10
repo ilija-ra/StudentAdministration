@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Fabric;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Microsoft.ServiceFabric.Data;
+using StudentAdministration.Api.Identity;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Fabric;
+using System.Text;
 
 namespace StudentAdministration.Api
 {
@@ -44,18 +41,85 @@ namespace StudentAdministration.Api
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url);
+
+                        builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWTSettings"));
+                        builder.Services.AddScoped<JwtManager>();
+                        builder.Services.AddAuthentication(options =>
+                        {
+                            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                        })
+                        .AddJwtBearer(o => {
+                            o.RequireHttpsMetadata = false;
+                            o.SaveToken = false;
+                            o.TokenValidationParameters = new TokenValidationParameters
+                            {
+                                ValidateIssuerSigningKey = true,
+                                ValidateIssuer = true,
+                                ValidateAudience = true,
+                                ValidateLifetime = true,
+                                ClockSkew = TimeSpan.Zero,
+                                ValidIssuer = builder.Configuration["JWTSettings:Issuer"],
+                                ValidAudience = builder.Configuration["JWTSettings:Audience"],
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:Key"]!))
+                            };
+                            o.Events = new JwtBearerEvents()
+                            {
+                                OnAuthenticationFailed = c =>
+                                {
+                                    c.NoResult();
+                                    c.Response.StatusCode = 401;
+                                    c.Response.ContentType = "text/plain";
+                                    if (c.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                                        c.Response.Headers.Add("IS-TOKEN-EXPIRED", "true");
+
+                                    return c.Response.WriteAsync(c.Exception.ToString());
+                                },
+                                OnChallenge = context =>
+                                {
+                                    context.HandleResponse();
+                                    context.Response.StatusCode = 401;
+                                    context.Response.ContentType = "application/json";
+                                    var result = "Not Authorized";
+                                    return context.Response.WriteAsync(result);
+                                },
+                                OnForbidden = context =>
+                                {
+                                    context.Response.StatusCode = 403;
+                                    context.Response.ContentType = "application/json";
+                                    var result = "Forbidden action for this role";
+                                    return context.Response.WriteAsync(result);
+                                },
+                            };
+                        });
+
+                        builder.Services.AddAuthorization(options =>
+                        {
+                            options.AddPolicy(IdentityData.RequireProfessorRole, policy =>
+                                policy.RequireClaim(CustomClaimTypes.Role, IdentityData.ProfessorRole));
+
+                            options.AddPolicy(IdentityData.RequireStudentRole, policy =>
+                                policy.RequireClaim(CustomClaimTypes.Role, IdentityData.StudentRole));
+                        });
+
                         builder.Services.AddControllers();
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
+                        builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
                         var app = builder.Build();
                         if (app.Environment.IsDevelopment())
                         {
-                        app.UseSwagger();
-                        app.UseSwaggerUI();
+                            app.UseSwagger();
+                            app.UseSwaggerUI();
                         }
+                        app.UseHttpsRedirection();
+
+                        app.UseAuthentication();
                         app.UseAuthorization();
+
                         app.MapControllers();
-                        
+
                         return app;
 
                     }))
