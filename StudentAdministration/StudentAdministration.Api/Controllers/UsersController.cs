@@ -13,7 +13,7 @@ namespace StudentAdministration.Api.Controllers
     public class UsersController : ControllerBase
     {
         [HttpGet]
-        [Route("GetById")]
+        [Route("GetById/{userId}/{userPartitionKey}")]
         public async Task<IActionResult> GetById(string userId, string userPartitionKey)
         {
             var userProxy = ServiceProxy.Create<IUser>(new Uri("fabric:/StudentAdministration/StudentAdministration.User"));

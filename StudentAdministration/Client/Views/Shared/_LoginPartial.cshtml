@@ -1,0 +1,20 @@
+﻿<ul class="navbar-nav">
+    @if (UserSingleton.Instance.IsInstantiated!.Value)
+    {
+        <li class="nav-item">
+            <a id="manage" class="nav-link text-dark" asp-controller="Home" asp-action="Index" title="Manage">Hello, @UserSingleton.Instance.EmailAddress!</a>
+        </li>
+        <li class="nav-item">
+            <a id="manage" class="nav-link text-dark" asp-controller="Accounts" asp-action="Logout" title="Manage">Logout</a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="register" asp-controller="Accounts" asp-action="Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-controller="Accounts" asp-action="Login">Login</a>
+        </li>
+    }
+</ul>

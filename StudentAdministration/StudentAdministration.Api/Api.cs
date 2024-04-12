@@ -89,7 +89,12 @@ namespace StudentAdministration.Api
                                     context.Response.ContentType = "application/json";
                                     var result = "Forbidden action for this role";
                                     return context.Response.WriteAsync(result);
-                                },
+                                }//,
+                                //OnMessageReceived = context =>
+                                //{
+                                //    context.Token = context.Request.Cookies["JwtToken"];
+                                //    return Task.CompletedTask;
+                                //}
                             };
                         });
 

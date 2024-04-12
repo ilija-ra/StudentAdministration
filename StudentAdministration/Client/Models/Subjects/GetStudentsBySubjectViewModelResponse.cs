@@ -1,6 +1,11 @@
-﻿namespace StudentAdministration.Communication.Subjects.Models
+﻿namespace StudentAdministration.Client.Models.Subjects
 {
-    public class SubjectEnrollRequestModel
+    public class GetStudentsBySubjectViewModelResponse
+    {
+        public ICollection<GetStudentsBySubjectViewModelItem>? Items { get; set; } = new List<GetStudentsBySubjectViewModelItem>();
+    }
+
+    public class GetStudentsBySubjectViewModelItem
     {
         public string? Id { get; set; }
 
@@ -10,13 +15,11 @@
 
         public string? StudentId { get; set; }
 
+        public string? StudentIndex { get; set; }
+
         public string? StudentPartitionKey { get; set; }
 
         public string? StudentFullName { get; set; }
-
-        public string? StudentIndex { get; set; }
-
-        public string? ProfessorFullName { get; set; }
 
         public int? Grade { get; set; }
     }

@@ -1,6 +1,6 @@
 ﻿namespace StudentAdministration.Communication.Subjects.Models
 {
-    public class SubjectSetGradesResponseModel
+    public class SubjectSetGradeResponseModel
     {
 
     }

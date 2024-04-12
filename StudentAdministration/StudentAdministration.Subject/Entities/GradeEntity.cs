@@ -19,6 +19,8 @@ namespace StudentAdministration.Subject.Entities
 
         public string? StudentFullName { get; set; }
 
+        public string? StudentIndex { get; set; }
+
         public int? Grade { get; set; }
 
         public string? PartitionKey { get; set; }

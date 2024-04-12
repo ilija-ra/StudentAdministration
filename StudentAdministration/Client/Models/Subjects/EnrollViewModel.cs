@@ -1,6 +1,6 @@
-﻿namespace StudentAdministration.Communication.Subjects.Models
+﻿namespace Client.Models.Subjects
 {
-    public class SubjectEnrollRequestModel
+    public class EnrollViewModel
     {
         public string? Id { get; set; }
 
@@ -13,8 +13,6 @@
         public string? StudentPartitionKey { get; set; }
 
         public string? StudentFullName { get; set; }
-
-        public string? StudentIndex { get; set; }
 
         public string? ProfessorFullName { get; set; }
 

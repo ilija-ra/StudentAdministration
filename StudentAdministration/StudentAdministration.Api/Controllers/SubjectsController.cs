@@ -49,10 +49,26 @@ namespace StudentAdministration.Api.Controllers
         [Authorize(Policy = IdentityData.RequireStudentRole)]
         [HttpPost]
         [Route("DropOut")]
-        public async Task<IActionResult> DropOut(string? subjectId, string? studentId)
+        public async Task<IActionResult> DropOut(SubjectDropOutRequestModel model)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
-            var result = await subjectProxy.DropOut(subjectId, studentId);
+            var result = await subjectProxy.DropOut(model);
+
+            if (result is null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
+        [Authorize(Policy = IdentityData.RequireProfessorRole)]
+        [HttpGet]
+        [Route("GetSubjectsByProfessor/{professorId}")]
+        public async Task<IActionResult> GetSubjectsByProfessor(string? professorId)
+        {
+            var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
+            var result = await subjectProxy.GetSubjectsByProfessor(professorId);
 
             if (result is null)
             {
@@ -80,11 +96,11 @@ namespace StudentAdministration.Api.Controllers
 
         [Authorize(Policy = IdentityData.RequireProfessorRole)]
         [HttpPut]
-        [Route("SetGrades")]
-        public async Task<IActionResult> SetGrades([FromBody] SubjectSetGradesRequestModel model)
+        [Route("SetGrade")]
+        public async Task<IActionResult> SetGrade([FromBody] SubjectSetGradesRequestModel model)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
-            var result = await subjectProxy.SetGrades(model);
+            var result = await subjectProxy.SetGrade(model);
 
             if (result is null)
             {
@@ -111,7 +127,7 @@ namespace StudentAdministration.Api.Controllers
         }
 
         [Authorize(Policy = IdentityData.RequireStudentRole)]
-        [HttpPut]
+        [HttpGet]
         [Route("ConfirmSubjects")]
         public async Task<IActionResult> ConfirmSubjects()
         {

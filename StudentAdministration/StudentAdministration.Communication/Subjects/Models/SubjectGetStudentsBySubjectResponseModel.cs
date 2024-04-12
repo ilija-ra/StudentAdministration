@@ -15,6 +15,8 @@
 
         public string? StudentId { get; set; }
 
+        public string? StudentIndex { get; set; }
+
         public string? StudentPartitionKey { get; set; }
 
         public string? StudentFullName { get; set; }

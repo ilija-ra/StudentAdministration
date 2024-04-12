@@ -6,9 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
     <ServerGarbageCollection>True</ServerGarbageCollection>
-    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-	 <!--<SelfContained>True</SelfContained>-->
-	<TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	 <SelfContained>True</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>

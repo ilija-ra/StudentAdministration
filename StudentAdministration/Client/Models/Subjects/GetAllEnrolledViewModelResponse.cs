@@ -1,15 +1,15 @@
-﻿namespace StudentAdministration.Communication.Subjects.Models
+﻿namespace StudentAdministration.Client.Models.Subjects
 {
-    public class SubjectGetAllEnrolledResponseModel
+    public class GetAllEnrolledViewModelResponse
     {
-        public ICollection<SubjectGetAllEnrolledItemModel>? Items { get; set; } = new List<SubjectGetAllEnrolledItemModel>();
+        public ICollection<GetAllEnrolledViewModelItem>? Items { get; set; } = new List<GetAllEnrolledViewModelItem>();
     }
 
-    public class SubjectGetAllEnrolledItemModel
+    public class GetAllEnrolledViewModelItem
     {
         public string? Id { get; set; }
 
-        public SubjectItemModel? Subject { get; set; }
+        public SubjectViewModelItem? Subject { get; set; }
 
         public string? StudentId { get; set; }
 
@@ -18,7 +18,7 @@
         public string? ProfessorFullName { get; set; }
     }
 
-    public class SubjectItemModel
+    public class SubjectViewModelItem
     {
         public string? Id { get; set; }
 

@@ -13,7 +13,8 @@ namespace Client.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [Route("Index")]
+        public async Task<IActionResult> Index()
         {
             return View();
         }

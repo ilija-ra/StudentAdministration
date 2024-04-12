@@ -1,6 +1,6 @@
-﻿namespace StudentAdministration.Communication.Subjects.Models
+﻿namespace Client.Models.Subjects
 {
-    public class SubjectSetGradesRequestModel
+    public class SetGradeViewModel
     {
         public string? SubjectId { get; set; }
 

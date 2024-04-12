@@ -1,6 +1,6 @@
-﻿namespace StudentAdministration.Communication.Subjects.Models
+﻿namespace Client.Models.Subjects
 {
-    public class SubjectDropOutRequestModel
+    public class DropOutViewModel
     {
         public string? SubjectId { get; set; }
 

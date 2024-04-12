@@ -32,7 +32,7 @@ namespace StudentAdministration.Subject
 
         #region ISubjectImplementation
 
-        public async Task<SubjectEnrollResponseModel> Enroll(SubjectEnrollRequestModel model)
+        public async Task<SubjectEnrollResponseModel> Enroll(SubjectEnrollRequestModel? model)
         {
             try
             {
@@ -46,6 +46,7 @@ namespace StudentAdministration.Subject
                         StudentId = model?.StudentId,
                         StudentPartitionKey = model?.StudentPartitionKey,
                         StudentFullName = model?.StudentFullName,
+                        StudentIndex = model?.StudentIndex,
                         ProfessorFullName = model?.ProfessorFullName,
                         Grade = model?.Grade
                     };
@@ -70,21 +71,20 @@ namespace StudentAdministration.Subject
             }
         }
 
-        public async Task<SubjectDropOutResponseModel> DropOut(string subjectId, string studentId)
+        public async Task<SubjectDropOutResponseModel> DropOut(SubjectDropOutRequestModel? model)
         {
             try
             {
                 using (ITransaction tx = _stateManager.CreateTransaction())
                 {
-                    ConditionalValue<GradeEntity> existingGrade = await _grades.TryGetValueAsync(tx, subjectId! + studentId);
+                    ConditionalValue<GradeEntity> existingGrade = await _grades.TryGetValueAsync(tx, model?.SubjectId! + model?.StudentId);
 
                     if (!existingGrade.HasValue)
                     {
-                        tx.Abort();
                         return null!;
                     }
 
-                    await _grades.TryRemoveAsync(tx, subjectId! + studentId);
+                    await _grades.TryRemoveAsync(tx, model?.SubjectId! + model?.StudentId);
                     await tx.CommitAsync();
 
                     return new SubjectDropOutResponseModel();
@@ -125,19 +125,27 @@ namespace StudentAdministration.Subject
 
                 using (ITransaction tx = _stateManager.CreateTransaction())
                 {
-                    var entities = _gradeTableClient.QueryAsync<GradeEntity>(x => x.StudentId!.Equals(studentId));
+                    var gradeEntities = _gradeTableClient.QueryAsync<GradeEntity>(x => x.StudentId!.Equals(studentId));
+                    var subjectEntities = _subjectTableClient.QueryAsync<SubjectEntity>().ToBlockingEnumerable();
 
-                    await foreach (var entity in entities)
+                    await foreach (var entity in gradeEntities)
                     {
+                        var subject = subjectEntities.FirstOrDefault(x => x.Id == entity.SubjectId && x.PartitionKey == entity.SubjectPartitionKey);
+
                         items.Add(new SubjectGetAllEnrolledItemModel()
                         {
                             Id = entity.Id,
-                            SubjectId = entity.SubjectId,
-                            SubjectPartitionKey = entity.SubjectPartitionKey,
+                            Subject = new SubjectItemModel()
+                            {
+                                Id = subject?.Id,
+                                Title = subject?.Title,
+                                Department = subject?.Department,
+                                Grade = entity.Grade,
+                                PartitionKey = subject?.PartitionKey
+                            },
                             StudentId = entity.StudentId,
                             StudentPartitionKey = entity.StudentPartitionKey,
-                            ProfessorFullName = entity.ProfessorFullName,
-                            Grade = entity.Grade
+                            ProfessorFullName = entity.ProfessorFullName
                         });
 
                         await _grades.AddAsync(tx, entity?.SubjectId + entity?.StudentId, entity!);
@@ -163,18 +171,35 @@ namespace StudentAdministration.Subject
                 using (var tx = _stateManager.CreateTransaction())
                 {
                     var enumerator = (await _grades.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+                    var subjectEntities = _subjectTableClient.QueryAsync<SubjectEntity>().ToBlockingEnumerable();
 
                     while (await enumerator.MoveNextAsync(default))
                     {
+                        var enumer = enumerator.Current.Value;
+                        var subject = subjectEntities.FirstOrDefault(x => x.Id == enumer.SubjectId && x.PartitionKey == enumer.SubjectPartitionKey);
+
                         response.Items!.Add(new SubjectGetAllEnrolledItemModel()
                         {
-                            Id = enumerator.Current.Value.Id,
-                            SubjectId = enumerator.Current.Value.SubjectId,
-                            SubjectPartitionKey = enumerator.Current.Value.SubjectPartitionKey,
-                            StudentId = enumerator.Current.Value.StudentId,
-                            StudentPartitionKey = enumerator.Current.Value.StudentPartitionKey,
-                            ProfessorFullName = enumerator.Current.Value.ProfessorFullName,
-                            Grade = enumerator.Current.Value.Grade
+                            //Id = enumer.Id,
+                            //SubjectId = enumer.SubjectId,
+                            //SubjectPartitionKey = enumer.SubjectPartitionKey,
+                            //StudentId = enumer.StudentId,
+                            //StudentPartitionKey = enumer.StudentPartitionKey,
+                            //ProfessorFullName = enumer.ProfessorFullName,
+                            //Grade = enumer.Grade
+
+                            Id = enumer.Id,
+                            Subject = new SubjectItemModel()
+                            {
+                                Id = subject?.Id,
+                                Title = subject?.Title,
+                                Department = subject?.Department,
+                                Grade = enumer.Grade,
+                                PartitionKey = subject?.PartitionKey
+                            },
+                            StudentId = enumer.StudentId,
+                            StudentPartitionKey = enumer.StudentPartitionKey,
+                            ProfessorFullName = enumer.ProfessorFullName
                         });
                     }
                 }
@@ -187,7 +212,37 @@ namespace StudentAdministration.Subject
             }
         }
 
-        public async Task<SubjectGetStudentsBySubjectResponseModel> GetStudentsBySubject(string subjectId)
+        public async Task<SubjectGetSubjectsByProfessorResponseModel> GetSubjectsByProfessor(string? professorId)
+        {
+            try
+            {
+                var items = new List<SubjectGetSubjectsByProfessorItemModel>();
+
+                var entities = _subjectTableClient.QueryAsync<SubjectEntity>(x => x.ProfessorId!.Equals(professorId));
+
+                await foreach (var entity in entities)
+                {
+                    items.Add(new SubjectGetSubjectsByProfessorItemModel()
+                    {
+                        SubjectId = entity.Id,
+                        SubjectPartitionKey = entity.PartitionKey,
+                        Title = entity.Title,
+                        Department = entity.Department,
+                        ProfessorId = entity.ProfessorId,
+                        ProfessorFullName = entity.ProfessorFullName,
+                        ProfessorPartitionKey = entity.ProfessorPartitionKey,
+                    });
+                }
+
+                return new SubjectGetSubjectsByProfessorResponseModel() { Items = items };
+            }
+            catch
+            {
+                return null!;
+            }
+        }
+
+        public async Task<SubjectGetStudentsBySubjectResponseModel> GetStudentsBySubject(string? subjectId)
         {
             try
             {
@@ -204,6 +259,7 @@ namespace StudentAdministration.Subject
                         SubjectPartitionKey = entity.SubjectPartitionKey,
                         StudentId = entity.StudentId,
                         StudentPartitionKey = entity.StudentPartitionKey,
+                        StudentIndex = entity.StudentIndex,
                         StudentFullName = entity.StudentFullName,
                         Grade = entity.Grade
                     });
@@ -217,29 +273,45 @@ namespace StudentAdministration.Subject
             }
         }
 
-        public async Task<SubjectSetGradesResponseModel> SetGrades(SubjectSetGradesRequestModel? model)
+        public async Task<SubjectSetGradeResponseModel> SetGrade(SubjectSetGradesRequestModel? model)
         {
             try
             {
-                var entities = _gradeTableClient.QueryAsync<GradeEntity>(x => x.SubjectId!.Equals(model!.SubjectId));
+                var student = _gradeTableClient.QueryAsync<GradeEntity>(
+                    x => x.SubjectId == model!.SubjectId &&
+                    x.SubjectPartitionKey == model.SubjectPartitionKey &&
+                    x.StudentId == model.StudentId &&
+                    x.StudentPartitionKey == model.StudentPartitionKey)
+                    .ToBlockingEnumerable().FirstOrDefault();
 
-                await foreach (var entity in entities)
+                if (student is null)
                 {
-                    foreach (var studentGrade in model!.StudentGrades)
-                    {
-                        if (studentGrade.StudentPartitionKey!.Equals(entity.StudentPartitionKey)
-                            && studentGrade.StudentId!.Equals(entity.StudentId))
-                        {
-                            entity.Grade = studentGrade.Grade;
-
-                            await _gradeTableClient.UpsertEntityAsync(entity);
-
-                            break;
-                        }
-                    }
+                    return null!;
                 }
 
-                return new SubjectSetGradesResponseModel();
+                student.Grade = model?.Grade;
+
+                await _gradeTableClient.UpsertEntityAsync(student);
+
+                return new SubjectSetGradeResponseModel();
+
+                //await foreach (var entity in entities)
+                //{
+                //    foreach (var studentGrade in model!.StudentGrades)
+                //    {
+                //        if (studentGrade.StudentPartitionKey!.Equals(entity.StudentPartitionKey)
+                //            && studentGrade.StudentId!.Equals(entity.StudentId))
+                //        {
+                //            entity.Grade = studentGrade.Grade;
+
+                //            await _gradeTableClient.UpsertEntityAsync(entity);
+
+                //            break;
+                //        }
+                //    }
+                //}
+
+                //return new SubjectSetGradeResponseModel();
             }
             catch
             {
@@ -408,6 +480,24 @@ namespace StudentAdministration.Subject
                 throw new Exception(ex.Message);
             }
         }
+
+        private async Task EmptyDictionaryAsync<T>(IReliableDictionary<string, T> dictionary)
+        {
+            using (var tx = _stateManager.CreateTransaction())
+            {
+                var enumerable = await dictionary.CreateEnumerableAsync(tx);
+                var enumerator = enumerable.GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(default))
+                {
+                    var current = enumerator.Current;
+                    await dictionary.TryRemoveAsync(tx, current.Key);
+                }
+
+                await tx.CommitAsync();
+            }
+        }
+
 
         private async Task<bool> IsDictionaryEmptyAsync<T>(IReliableDictionary<string, T> dictionary)
         {

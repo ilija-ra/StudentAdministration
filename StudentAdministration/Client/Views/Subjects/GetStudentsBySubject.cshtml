@@ -1,0 +1,79 @@
+﻿@model IEnumerable<StudentAdministration.Client.Models.Subjects.GetStudentsBySubjectViewModelItem>
+
+@{
+    ViewData["Title"] = "GetStudentsBySubject";
+}
+
+<h1 style="text-align:center">Students</h1>
+
+<table class="table" style="text-align:center">
+    <thead>
+        <tr>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th> *@
+            @* <th>
+                @Html.DisplayNameFor(model => model.SubjectId)
+            </th> *@
+            @* <th>
+                @Html.DisplayNameFor(model => model.SubjectPartitionKey)
+            </th> *@
+            @* <th>
+                @Html.DisplayNameFor(model => model.StudentId)
+            </th> *@
+            <th style="width:30%">
+                @Html.DisplayNameFor(model => model.StudentIndex)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.StudentPartitionKey)
+            </th> *@
+            <th style="width:30%">
+                @Html.DisplayNameFor(model => model.StudentFullName)
+            </th>
+            <th style="width:15%">
+                @Html.DisplayNameFor(model => model.Grade)
+            </th>
+            <th style="width:15%"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td> *@
+            @* <td>
+                @Html.DisplayFor(modelItem => item.SubjectId)
+            </td> *@
+            @* <td>
+                @Html.DisplayFor(modelItem => item.SubjectPartitionKey)
+            </td> *@
+            @* <td>
+                @Html.DisplayFor(modelItem => item.StudentId)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentIndex)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.StudentPartitionKey)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentFullName)
+            </td>
+            <td>
+                <input asp-for="@item.Grade" class="form-control" value="0" type="number"/>
+            </td>
+            <td>
+                @Html.ActionLink("Give grade", "SetGrade", "Subjects", new 
+                { 
+                    subjectId = item.SubjectId,
+                    subjectPartitionKey = item.SubjectPartitionKey,
+                    studentId = item.StudentId,
+                    studentPartitionKey = item.StudentPartitionKey,
+                    grade = item.Grade
+                })
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

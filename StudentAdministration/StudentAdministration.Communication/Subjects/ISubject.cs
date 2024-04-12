@@ -9,11 +9,13 @@ namespace StudentAdministration.Communication.Subjects
 
         Task<SubjectGetAllEnrolledResponseModel> GetAllEnrolled(string? studentId);
 
-        Task<SubjectDropOutResponseModel> DropOut(string? subjectId, string? studentId);
+        Task<SubjectDropOutResponseModel> DropOut(SubjectDropOutRequestModel model);
 
         Task<SubjectGetStudentsBySubjectResponseModel> GetStudentsBySubject(string? subjectId);
 
-        Task<SubjectSetGradesResponseModel> SetGrades(SubjectSetGradesRequestModel? model);
+        Task<SubjectGetSubjectsByProfessorResponseModel> GetSubjectsByProfessor(string? professorId);
+
+        Task<SubjectSetGradeResponseModel> SetGrade(SubjectSetGradesRequestModel? model);
 
         Task<SubjectGetAllResponseModel> GetAll();
 

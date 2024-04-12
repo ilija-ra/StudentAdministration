@@ -1,0 +1,66 @@
+﻿@model IEnumerable<StudentAdministration.Client.Models.Subjects.GetAllSubjectsByProfessorViewModelItem>
+
+@{
+    ViewData["Title"] = "My subjects";
+}
+
+<h1 style="text-align:center">My subjects</h1>
+
+<table class="table" style="text-align:center">
+    <thead>
+        <tr>
+            <th style="width:30%">
+                @Html.DisplayNameFor(model => model.SubjectId)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.SubjectPartitionKey)
+            </th> *@
+            <th style="width:15%">
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th style="width:30%">
+                @Html.DisplayNameFor(model => model.Department)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.ProfessorId)
+            </th> *@
+            @* <th>
+                @Html.DisplayNameFor(model => model.ProfessorPartitionKey)
+            </th> *@
+            <th style="width:15%">
+                @Html.DisplayNameFor(model => model.ProfessorFullName)
+            </th>
+            <th style="width:10%"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubjectId)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.SubjectPartitionKey)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.ProfessorId)
+            </td> *@
+            @* <td>
+                @Html.DisplayFor(modelItem => item.ProfessorPartitionKey)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.ProfessorFullName)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "GetStudentsBySubject", "Subjects", new { subjectId=item.SubjectId })
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
