@@ -128,11 +128,11 @@ namespace StudentAdministration.Api.Controllers
 
         [Authorize(Policy = IdentityData.RequireStudentRole)]
         [HttpGet]
-        [Route("ConfirmSubjects")]
-        public async Task<IActionResult> ConfirmSubjects()
+        [Route("ConfirmSubjects/{studentId}")]
+        public async Task<IActionResult> ConfirmSubjects(string? studentId)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
-            var result = await subjectProxy.ConfirmSubjects();
+            var result = await subjectProxy.ConfirmSubjects(studentId);
 
             if (result is null)
             {

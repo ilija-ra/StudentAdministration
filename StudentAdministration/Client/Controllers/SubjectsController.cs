@@ -29,6 +29,7 @@ namespace Client.Controllers
                 SubjectPartitionKey = subjectPartitionKey,
                 StudentId = UserSingleton.Instance.Id,
                 StudentPartitionKey = UserSingleton.Instance.PartitionKey,
+                StudentIndex = UserSingleton.Instance.Index,
                 StudentFullName = $"{UserSingleton.Instance.FirstName} {UserSingleton.Instance.LastName}",
                 ProfessorFullName = professorFullName,
                 Grade = 0
@@ -40,14 +41,14 @@ namespace Client.Controllers
 
             var response = await _httpClient.PostAsync($"/Subjects/Enroll", content);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                return View("Error");
+                TempData["SuccessfulMessage"] = "Enrolled successfully!";
             }
-
-            //var jsonResult = await response.Content.ReadAsStringAsync();
-
-            //var result = JsonSerializer.Deserialize<EnrollViewModelResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            else
+            {
+                TempData["ErrorMessage"] = "You have already enrolled in this subject!";
+            }
 
             return RedirectToAction("GetAll");
         }
@@ -81,7 +82,7 @@ namespace Client.Controllers
             var model = new DropOutViewModel()
             {
                 SubjectId = subjectId,
-                StudentId = studentId,
+                StudentId = studentId
             };
 
             var jsonModel = JsonSerializer.Serialize(model);
@@ -90,9 +91,13 @@ namespace Client.Controllers
 
             var response = await _httpClient.PostAsync($"/Subjects/DropOut", content);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                return View("Error");
+                TempData["SuccessfulMessage"] = "Dropped out successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error occured during drop out!";
             }
 
             return RedirectToAction("GetAllEnrolled");
@@ -125,11 +130,15 @@ namespace Client.Controllers
         [Route("ConfirmSubjects")]
         public async Task<IActionResult> ConfirmSubjects()
         {
-            var response = await _httpClient.GetAsync($"/Subjects/ConfirmSubjects");
+            var response = await _httpClient.GetAsync($"/Subjects/ConfirmSubjects/{UserSingleton.Instance.Id}");
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                return View("Error");
+                TempData["SuccessfulMessage"] = "Confirmed subjects successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error occured during subjects confirmation!";
             }
 
             return RedirectToAction("GetAllEnrolled");
@@ -181,31 +190,33 @@ namespace Client.Controllers
             return View(result.Items);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("SetGrade")]
-        public async Task<IActionResult> SetGrade(string? subjectId, string? subjectPartitionKey, string? studentId, string? studentPartitionKey, int? grade)
+        public async Task<IActionResult> SetGrade(GetStudentsBySubjectViewModelItem? model/*string? subjectId, string? subjectPartitionKey, string? studentId, string? studentPartitionKey, int? grade*/)
         {
-            var model = new SetGradeViewModel()
+            var jsonModel = JsonSerializer.Serialize(new SetGradeViewModel()
             {
-                SubjectId = subjectId,
-                SubjectPartitionKey = subjectPartitionKey,
-                StudentId = studentId,
-                StudentPartitionKey = studentPartitionKey,
-                Grade = grade
-            };
-
-            var jsonModel = JsonSerializer.Serialize(model);
+                SubjectId = model!.SubjectId,
+                SubjectPartitionKey = model.SubjectPartitionKey,
+                StudentId = model.StudentId,
+                StudentPartitionKey = model.StudentPartitionKey,
+                Grade = model.Grade
+            });
 
             var content = new StringContent(jsonModel, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PutAsync($"/Subjects/SetGrade", content);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                return View("Error");
+                TempData["SuccessfulMessage"] = "Grade set successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error occured while setting grade!";
             }
 
-            return RedirectToAction("GetStudentsBySubject", new { subjectId = subjectId });
+            return RedirectToAction("GetStudentsBySubject", new { subjectId = model!.SubjectId });
         }
 
         #endregion

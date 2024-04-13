@@ -14,7 +14,6 @@ namespace Client.Controllers
         {
             _httpClient = httpClientFactory.CreateClient();
             _httpClient.BaseAddress = new Uri("http://localhost:8645");
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserSingleton.JwtToken);
         }
 
         [HttpGet]
@@ -28,32 +27,38 @@ namespace Client.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Please check fields once again.");
+                return View(model);
+            }
+
             var jsonModel = JsonSerializer.Serialize(model);
 
             var content = new StringContent(jsonModel, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync($"/Accounts/Login", content);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var jsonResult = await response.Content.ReadAsStringAsync();
+                TempData["ErrorMessage"] = "Check your credentials!";
 
-                var result = JsonSerializer.Deserialize<LoginViewModelResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(model);
+            }
 
-                SetSingletonUser(result);
+            var jsonResult = await response.Content.ReadAsStringAsync();
 
-                if (result != null && result.Role == "Student")
-                {
-                    return RedirectToAction("GetAllEnrolled", "Subjects");
-                }
-                else
-                {
-                    return RedirectToAction("GetSubjectsByProfessor", "Subjects");
-                }
+            var result = JsonSerializer.Deserialize<LoginViewModelResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            SetSingletonUser(result);
+
+            if (result != null && result.Role == "Student")
+            {
+                return RedirectToAction("GetAllEnrolled", "Subjects");
             }
             else
             {
-                return View("Error");
+                return RedirectToAction("GetSubjectsByProfessor", "Subjects");
             }
         }
 
@@ -68,24 +73,26 @@ namespace Client.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Please check fields once again.");
+                return View(model);
+            }
+
             var jsonModel = JsonSerializer.Serialize(model);
 
             var content = new StringContent(jsonModel, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync($"/Accounts/Register", content);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                //var jsonResult = await response.Content.ReadAsStringAsync();
-
-                //var result = JsonSerializer.Deserialize<RegisterViewModelResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return RedirectToAction("Login", "Accounts");
+                TempData["ErrorMessage"] = "Error occured during registration process!";
             }
-            else
-            {
-                return View("Error");
-            }
+
+            TempData["SuccessfulMessage"] = "Registered successfully!";
+
+            return RedirectToAction("Login", "Accounts");
         }
 
         [HttpGet]

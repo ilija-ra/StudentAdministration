@@ -294,24 +294,6 @@ namespace StudentAdministration.Subject
                 await _gradeTableClient.UpsertEntityAsync(student);
 
                 return new SubjectSetGradeResponseModel();
-
-                //await foreach (var entity in entities)
-                //{
-                //    foreach (var studentGrade in model!.StudentGrades)
-                //    {
-                //        if (studentGrade.StudentPartitionKey!.Equals(entity.StudentPartitionKey)
-                //            && studentGrade.StudentId!.Equals(entity.StudentId))
-                //        {
-                //            entity.Grade = studentGrade.Grade;
-
-                //            await _gradeTableClient.UpsertEntityAsync(entity);
-
-                //            break;
-                //        }
-                //    }
-                //}
-
-                //return new SubjectSetGradeResponseModel();
             }
             catch
             {
@@ -351,10 +333,20 @@ namespace StudentAdministration.Subject
             }
         }
 
-        public async Task<SubjectConfirmSubjectsResponseModel> ConfirmSubjects()
+        public async Task<SubjectConfirmSubjectsResponseModel> ConfirmSubjects(string? studentId)
         {
             try
             {
+                var azureItems = _gradeTableClient.QueryAsync<GradeEntity>(x => x.StudentId == studentId);
+
+                await foreach (var page in azureItems.AsPages())
+                {
+                    foreach (var entity in page.Values)
+                    {
+                        await _gradeTableClient.DeleteEntityAsync(entity.PartitionKey, entity.RowKey);
+                    }
+                }
+
                 var items = await GetItemsFromDictionaryAsync();
 
                 foreach (var item in items)
@@ -497,7 +489,6 @@ namespace StudentAdministration.Subject
                 await tx.CommitAsync();
             }
         }
-
 
         private async Task<bool> IsDictionaryEmptyAsync<T>(IReliableDictionary<string, T> dictionary)
         {

@@ -16,3 +16,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.alert-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    width: 25%;
+    margin-top: 50px;
+    margin-right: 20px;
+    text-align: center;
+}
+
+.alert {
+    position: relative;
+    margin-bottom: 0;
+}

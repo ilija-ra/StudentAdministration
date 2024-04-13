@@ -32,12 +32,27 @@ namespace Client.Controllers
 
             var result = JsonSerializer.Deserialize<UserGetByIdViewModelResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            return View(result);
+            if (result is null)
+            {
+                return View("Error");
+            }
+
+            var user = new UserViewModel()
+            {
+                Id = result.Id,
+                FirstName = result.FirstName,
+                LastName = result.LastName,
+                Index = result.Index,
+                EmailAddress = result.EmailAddress,
+                PartitionKey = result.PartitionKey
+            };
+
+            return View(user);
         }
 
         [HttpPost]
         [Route("Update")]
-        public async Task<IActionResult> Update(UserGetByIdViewModelResponse model)
+        public async Task<IActionResult> Update(UserViewModel model)
         {
             var jsonModel = JsonSerializer.Serialize(new
             {
@@ -53,16 +68,14 @@ namespace Client.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                //var jsonResult = await response.Content.ReadAsStringAsync();
-
-                //var result = JsonSerializer.Deserialize<UserUpdateViewModelResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return RedirectToAction("UserProfile");
+                TempData["SuccessfulMessage"] = "Updated info successfully!";
             }
             else
             {
-                return View("Error");
+                TempData["ErrorMessage"] = "Error occured during update process!";
             }
+
+            return RedirectToAction("UserProfile");
         }
     }
 }

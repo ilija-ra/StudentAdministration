@@ -19,6 +19,6 @@ namespace StudentAdministration.Communication.Subjects
 
         Task<SubjectGetAllResponseModel> GetAll();
 
-        Task<SubjectConfirmSubjectsResponseModel> ConfirmSubjects();
+        Task<SubjectConfirmSubjectsResponseModel> ConfirmSubjects(string? studentId);
     }
 }

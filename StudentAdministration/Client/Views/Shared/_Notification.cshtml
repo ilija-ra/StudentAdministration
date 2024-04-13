@@ -1,0 +1,18 @@
+﻿@{
+    if (TempData["SuccessfulMessage"] != null)
+    {
+        <div class="alert-container">
+            <div class="alert alert-success">
+                @TempData["SuccessfulMessage"]
+            </div>
+        </div>
+    }
+    else if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-container">
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        </div>
+    }
+}

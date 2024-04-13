@@ -1,4 +1,6 @@
-﻿namespace StudentAdministration.Client.Models.Subjects
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace StudentAdministration.Client.Models.Subjects
 {
     public class GetAllEnrolledViewModelResponse
     {
@@ -11,10 +13,13 @@
 
         public SubjectViewModelItem? Subject { get; set; }
 
+        [Display(Name = "Student id")]
         public string? StudentId { get; set; }
 
+        [Display(Name = "Student partition key")]
         public string? StudentPartitionKey { get; set; }
 
+        [Display(Name = "Professor full name")]
         public string? ProfessorFullName { get; set; }
     }
 

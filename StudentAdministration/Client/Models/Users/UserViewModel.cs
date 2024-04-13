@@ -1,11 +1,9 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace StudentAdministration.Client.Models.Accounts
+namespace StudentAdministration.Client.Models.Users
 {
-    public class RegisterViewModel
+    public class UserViewModel
     {
-        [DefaultValue(null)]
         public string? Id { get; set; }
 
         [Display(Name = "First name")]
@@ -25,9 +23,6 @@ namespace StudentAdministration.Client.Models.Accounts
         [Required(ErrorMessage = "Email address is required")]
         public string? EmailAddress { get; set; }
 
-        [PasswordPropertyText]
-        [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Password is required")]
-        public string? Password { get; set; }
+        public string? PartitionKey { get; set; }
     }
 }

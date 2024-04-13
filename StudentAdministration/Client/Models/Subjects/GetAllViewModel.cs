@@ -1,4 +1,6 @@
-﻿namespace StudentAdministration.Client.Models.Subjects
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace StudentAdministration.Client.Models.Subjects
 {
     public class GetAllViewModel
     {
@@ -22,6 +24,7 @@
     {
         public string? Id { get; set; }
 
+        [Display(Name = "Full name")]
         public string? FullName { get; set; }
 
         public string? PartitionKey { get; set; }
