@@ -13,9 +13,6 @@
     <table class="table table-hover table-responsive-sm display" style="text-align:center">
         <thead>
             <tr>
-                @* <th>
-            @Html.DisplayNameFor(model => model.Id)
-            </th> *@
                 <th style="width:20%">
                     @Html.DisplayNameFor(model => model.Subject!.Title)
                 </th>
@@ -35,9 +32,6 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    @* <td>
-            @Html.DisplayFor(modelItem => item.Id)
-            </td> *@
                     <td>
                         @Html.DisplayFor(modelItem => item.Subject!.Title)
                     </td>

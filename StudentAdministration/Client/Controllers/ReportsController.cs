@@ -36,6 +36,11 @@ namespace Client.Controllers
                 return View("Error");
             }
 
+            return GeneratePdfReport(result);
+        }
+
+        private FileStreamResult GeneratePdfReport(ReportViewModel result)
+        {
             FastReport.Utils.Config.WebMode = true;
             Report report = new Report();
 
@@ -56,7 +61,7 @@ namespace Client.Controllers
                 pdfExport.Dispose();
                 ms.Position = 0;
 
-                return File(ms, "application/pdf", "myreport.pdf");
+                return File(ms, "application/pdf", $"{UserSingleton.Instance.FirstName}_{UserSingleton.Instance.LastName}_{UserSingleton.Instance.Index}_report.pdf");
             }
             else
             {
