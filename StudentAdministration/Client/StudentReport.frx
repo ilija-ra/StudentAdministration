@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="04/14/2024 02:07:56" ReportInfo.Modified="04/14/2024 04:26:48" ReportInfo.CreatorVersion="2024.2.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="Subjects" ReferenceName="SubjectsRef" DataType="System.Int32" Enabled="true">
+      <Column Name="SubjectId" DataType="System.String"/>
+      <Column Name="SubjectTitle" DataType="System.String"/>
+      <Column Name="SubjectDepartment" DataType="System.String"/>
+      <Column Name="SubjectGrade" DataType="System.String"/>
+      <Column Name="ProfessorFullName" DataType="System.String"/>
+    </BusinessObjectDataSource>
+    <Parameter Name="StudentFullName" DataType="System.String" AsString=""/>
+    <Parameter Name="AverageGrade" DataType="System.String" AsString=""/>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="47.25">
+      <TextObject Name="Text1" Left="245.7" Top="9.45" Width="217.35" Height="28.35" Text="Student Report" Font="Arial, 20pt, style=Bold"/>
+      <TextObject Name="Text12" Left="595.35" Top="18.9" Width="94.5" Height="18.9" Text="[Date]" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="51.25" Width="718.2" Height="75.6">
+      <TextObject Name="Text14" Left="132.3" Top="18.9" Width="122.85" Height="18.9" Text="[StudentFullName]" Font="Arial, 10pt"/>
+      <TextObject Name="Text15" Left="18.9" Top="18.9" Width="66.15" Height="18.9" Text="Student:" Font="Arial, 10pt"/>
+      <TextObject Name="Text16" Left="18.9" Top="47.25" Width="103.95" Height="18.9" Text="Average grade:" Font="Arial, 10pt"/>
+      <TextObject Name="Text17" Left="132.3" Top="47.25" Width="122.85" Height="18.9" Text="[AverageGrade]" Font="Arial, 10pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="130.85" Width="718.2" Height="103.95" DataSource="Subjects">
+      <TextObject Name="Text11" Left="567" Top="28.35" Width="151.2" Height="18.9" Text="Professor Full Name" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text3" Left="18.9" Top="28.35" Width="94.5" Height="18.9" Text="Subject Id" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text5" Left="141.75" Top="28.35" Width="94.5" Height="18.9" Text="Subject Title" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text7" Left="264.6" Top="28.35" Width="141.75" Height="18.9" Text="Subject Department" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text9" Left="434.7" Top="28.35" Width="103.95" Height="18.9" Text="Subject Grade" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text10" Left="567" Top="75.6" Width="151.2" Height="18.9" Text="[Subjects.ProfessorFullName]" Font="Arial, 10pt"/>
+      <TextObject Name="Text2" Left="9.45" Top="75.6" Width="132.3" Height="18.9" Text="[Subjects.SubjectId]" Font="Arial, 10pt"/>
+      <TextObject Name="Text4" Left="132.3" Top="75.6" Width="141.75" Height="18.9" Text="[Subjects.SubjectTitle]" Font="Arial, 10pt"/>
+      <TextObject Name="Text6" Left="264.6" Top="75.6" Width="189" Height="18.9" Text="[Subjects.SubjectDepartment]" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="415.8" Top="75.6" Width="160.65" Height="18.9" Text="[Subjects.SubjectGrade]" Font="Arial, 10pt"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="238.8" Width="718.2" Height="37.8">
+      <TextObject Name="Text13" Left="652.05" Top="9.45" Width="56.7" Height="18.9" Text="[Page]" Font="Arial, 10pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

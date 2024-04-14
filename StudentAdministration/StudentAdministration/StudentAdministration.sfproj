@@ -42,6 +42,7 @@
     <ProjectReference Include="..\StudentAdministration.Api\StudentAdministration.Api.csproj">
       <ServiceLaunchUrl>http://localhost:{ServicePort}/swagger</ServiceLaunchUrl>
     </ProjectReference>
+    <ProjectReference Include="..\StudentAdministration.Report\StudentAdministration.Report.csproj" />
     <ProjectReference Include="..\StudentAdministration.Subject\StudentAdministration.Subject.csproj" />
     <ProjectReference Include="..\StudentAdministration.User\StudentAdministration.User.csproj" />
   </ItemGroup>

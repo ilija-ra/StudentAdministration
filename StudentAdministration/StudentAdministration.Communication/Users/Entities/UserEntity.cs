@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace StudentAdministration.User.Entities
+namespace StudentAdministration.Communication.Users.Entities
 {
     public class UserEntity : ITableEntity
     {

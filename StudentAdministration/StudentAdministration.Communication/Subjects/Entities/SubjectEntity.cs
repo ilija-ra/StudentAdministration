@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace StudentAdministration.Subject.Entities
+namespace StudentAdministration.Communication.Subjects.Entities
 {
     public class SubjectEntity : ITableEntity
     {
