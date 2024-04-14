@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 using StudentAdministration.Api.Identity;
+using StudentAdministration.Api.Validators;
 using StudentAdministration.Communication.Subjects;
 using StudentAdministration.Communication.Subjects.Models;
 using System.Fabric;
@@ -19,6 +21,14 @@ namespace StudentAdministration.Api.Controllers
         [Route("Enroll")]
         public async Task<IActionResult> Enroll([FromBody] SubjectEnrollRequestModel model)
         {
+            var validator = new SubjectEnrollRequestModelValidator();
+            ValidationResult valResult = validator.Validate(model);
+
+            if (!valResult.IsValid)
+            {
+                return BadRequest(valResult.Errors.Select(x => x.ErrorMessage).ToList());
+            }
+
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
             var result = await subjectProxy.Enroll(model);
 
@@ -33,7 +43,7 @@ namespace StudentAdministration.Api.Controllers
         [Authorize(Policy = IdentityData.RequireStudentRole)]
         [HttpGet]
         [Route("GetAllEnrolled/{studentId}")]
-        public async Task<IActionResult> GetAllEnrolled(string? studentId)
+        public async Task<IActionResult> GetAllEnrolled(string studentId)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
             var result = await subjectProxy.GetAllEnrolled(studentId);
@@ -51,6 +61,14 @@ namespace StudentAdministration.Api.Controllers
         [Route("DropOut")]
         public async Task<IActionResult> DropOut(SubjectDropOutRequestModel model)
         {
+            var validator = new SubjectDropOutRequestModelValidator();
+            ValidationResult valResult = validator.Validate(model);
+
+            if (!valResult.IsValid)
+            {
+                return BadRequest(valResult.Errors.Select(x => x.ErrorMessage).ToList());
+            }
+
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
             var result = await subjectProxy.DropOut(model);
 
@@ -65,7 +83,7 @@ namespace StudentAdministration.Api.Controllers
         [Authorize(Policy = IdentityData.RequireProfessorRole)]
         [HttpGet]
         [Route("GetSubjectsByProfessor/{professorId}")]
-        public async Task<IActionResult> GetSubjectsByProfessor(string? professorId)
+        public async Task<IActionResult> GetSubjectsByProfessor(string professorId)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
             var result = await subjectProxy.GetSubjectsByProfessor(professorId);
@@ -81,7 +99,7 @@ namespace StudentAdministration.Api.Controllers
         [Authorize(Policy = IdentityData.RequireProfessorRole)]
         [HttpGet]
         [Route("GetStudentsBySubject/{subjectId}")]
-        public async Task<IActionResult> GetStudentsBySubject(string? subjectId)
+        public async Task<IActionResult> GetStudentsBySubject(string subjectId)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
             var result = await subjectProxy.GetStudentsBySubject(subjectId);
@@ -99,6 +117,14 @@ namespace StudentAdministration.Api.Controllers
         [Route("SetGrade")]
         public async Task<IActionResult> SetGrade([FromBody] SubjectSetGradesRequestModel model)
         {
+            var validator = new SubjectSetGradesRequestModelValidator();
+            ValidationResult valResult = validator.Validate(model);
+
+            if (!valResult.IsValid)
+            {
+                return BadRequest(valResult.Errors.Select(x => x.ErrorMessage).ToList());
+            }
+
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
             var result = await subjectProxy.SetGrade(model);
 
@@ -129,7 +155,7 @@ namespace StudentAdministration.Api.Controllers
         [Authorize(Policy = IdentityData.RequireStudentRole)]
         [HttpGet]
         [Route("ConfirmSubjects/{studentId}")]
-        public async Task<IActionResult> ConfirmSubjects(string? studentId)
+        public async Task<IActionResult> ConfirmSubjects(string studentId)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
             var result = await subjectProxy.ConfirmSubjects(studentId);
