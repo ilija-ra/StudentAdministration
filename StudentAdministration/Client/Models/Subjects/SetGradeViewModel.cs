@@ -22,6 +22,7 @@ namespace Client.Models.Subjects
         public string? StudentPartitionKey { get; set; }
 
         [Required(ErrorMessage = "Grade is required")]
+        [Range(5, 10, ErrorMessage = "Grade must be between 5 and 10")]
         public int? Grade { get; set; }
     }
 }

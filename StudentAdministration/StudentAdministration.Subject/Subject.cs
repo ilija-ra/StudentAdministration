@@ -87,6 +87,11 @@ namespace StudentAdministration.Subject
                     await _grades.TryRemoveAsync(tx, model?.SubjectId! + model?.StudentId);
                     await tx.CommitAsync();
 
+                    if (await IsDictionaryEmptyAsync<GradeEntity>(_grades))
+                    {
+                        await ConfirmSubjects(model?.StudentId!);
+                    }
+
                     return new SubjectDropOutResponseModel();
                 }
             }
@@ -98,11 +103,11 @@ namespace StudentAdministration.Subject
 
         // WARNING: This method need to be called before anything else
         // Because it populates _grades dictionary
-        public async Task<SubjectGetAllEnrolledResponseModel> GetAllEnrolled(string? studentId)
+        public async Task<SubjectGetAllEnrolledResponseModel> GetAllEnrolled(string? studentId, bool? dropOut)
         {
             try
             {
-                if (await IsDictionaryEmptyAsync<GradeEntity>(_grades))
+                if (await IsDictionaryEmptyAsync<GradeEntity>(_grades) && dropOut == false)
                 {
                     return await UtilizeAzure(studentId);
                 }
@@ -180,14 +185,6 @@ namespace StudentAdministration.Subject
 
                         response.Items!.Add(new SubjectGetAllEnrolledItemModel()
                         {
-                            //Id = enumer.Id,
-                            //SubjectId = enumer.SubjectId,
-                            //SubjectPartitionKey = enumer.SubjectPartitionKey,
-                            //StudentId = enumer.StudentId,
-                            //StudentPartitionKey = enumer.StudentPartitionKey,
-                            //ProfessorFullName = enumer.ProfessorFullName,
-                            //Grade = enumer.Grade
-
                             Id = enumer.Id,
                             Subject = new SubjectItemModel()
                             {
@@ -367,6 +364,11 @@ namespace StudentAdministration.Subject
             {
                 return null!;
             }
+        }
+
+        public async Task ClearDictionaries()
+        {
+            await _grades.ClearAsync();
         }
 
         #endregion

@@ -103,15 +103,6 @@ namespace StudentAdministration.Api
                         });
 
                         builder.Services.AddControllers();
-
-                        //builder.Services.AddScoped<IValidator<AccountLoginRequestModel>, AccountLoginRequestModelValidator>();
-                        //builder.Services.AddScoped<IValidator<AccountRegisterRequestModel>, AccountRegisterRequestModelValidator>();
-                        //builder.Services.AddScoped<IValidator<SubjectDropOutRequestModel>, SubjectDropOutRequestModelValidator>();
-                        //builder.Services.AddScoped<IValidator<SubjectEnrollRequestModel>, SubjectEnrollRequestModelValidator>();
-                        //builder.Services.AddScoped<IValidator<SubjectSetGradesRequestModel>, SubjectSetGradesRequestModelValidator>();
-                        //builder.Services.AddScoped<IValidator<UserUpdateRequestModel>, UserUpdateRequestModelValidator>();
-
-
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
                         builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();

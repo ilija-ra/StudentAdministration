@@ -29,9 +29,17 @@ namespace StudentAdministration.Report
             try
             {
                 var subjects = new List<ReportGenerateReportItemModel>();
-
-                var gradeEntities = _gradeTableClient.QueryAsync<GradeEntity>(x => x.StudentId!.Equals(studentId)).ToBlockingEnumerable();
+                var gradeEntities = _gradeTableClient.QueryAsync<GradeEntity>(x => x.StudentId!.Equals(studentId)).ToBlockingEnumerable().Where(x => x.Grade > 5);
                 var subjectEntities = _subjectTableClient.QueryAsync<SubjectEntity>().ToBlockingEnumerable();
+
+                if (gradeEntities.Count() == 0)
+                {
+                    return new ReportGenerateReportResponseModel()
+                    {
+                        AverageGrade = 0,
+                        Subjects = subjects
+                    };
+                }
 
                 foreach (var entity in gradeEntities)
                 {
@@ -50,7 +58,7 @@ namespace StudentAdministration.Report
 
                 return new ReportGenerateReportResponseModel()
                 {
-                    AverageGrade = gradeEntities.Where(x => x.Grade != 0).Sum(x => x.Grade) / gradeEntities.Where(x => x.Grade != 0).Count(),
+                    AverageGrade = Math.Round((double)gradeEntities.Sum(x => x.Grade)! / gradeEntities.Count(), 2),
                     Subjects = subjects
                 };
             }

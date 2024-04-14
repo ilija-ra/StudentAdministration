@@ -32,7 +32,7 @@ namespace Client.Controllers
                 StudentIndex = UserSingleton.Instance.Index,
                 StudentFullName = $"{UserSingleton.Instance.FirstName} {UserSingleton.Instance.LastName}",
                 ProfessorFullName = professorFullName,
-                Grade = 0
+                Grade = 5
             };
 
             var jsonModel = JsonSerializer.Serialize(model);
@@ -55,9 +55,9 @@ namespace Client.Controllers
 
         [HttpGet]
         [Route("GetAllEnrolled")]
-        public async Task<IActionResult> GetAllEnrolled()
+        public async Task<IActionResult> GetAllEnrolled(bool? dropOut = false)
         {
-            var response = await _httpClient.GetAsync($"/Subjects/GetAllEnrolled/{UserSingleton.Instance.Id}");
+            var response = await _httpClient.GetAsync($"/Subjects/GetAllEnrolled/{UserSingleton.Instance.Id}/{dropOut}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -100,7 +100,7 @@ namespace Client.Controllers
                 TempData["ErrorMessage"] = "Error occured during drop out!";
             }
 
-            return RedirectToAction("GetAllEnrolled");
+            return RedirectToAction("GetAllEnrolled", new { dropOut = true });
         }
 
         [HttpGet]
@@ -192,7 +192,7 @@ namespace Client.Controllers
 
         [HttpPost]
         [Route("SetGrade")]
-        public async Task<IActionResult> SetGrade(GetStudentsBySubjectViewModelItem? model/*string? subjectId, string? subjectPartitionKey, string? studentId, string? studentPartitionKey, int? grade*/)
+        public async Task<IActionResult> SetGrade(GetStudentsBySubjectViewModelItem? model)
         {
             var jsonModel = JsonSerializer.Serialize(new SetGradeViewModel()
             {

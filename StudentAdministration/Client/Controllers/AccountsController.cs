@@ -1,6 +1,7 @@
 ﻿using Client.Models.Accounts;
 using Microsoft.AspNetCore.Mvc;
 using StudentAdministration.Client.Models.Accounts;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -14,6 +15,7 @@ namespace Client.Controllers
         {
             _httpClient = httpClientFactory.CreateClient();
             _httpClient.BaseAddress = new Uri("http://localhost:8645");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserSingleton.Instance.JwtToken);
         }
 
         [HttpGet]
@@ -99,16 +101,14 @@ namespace Client.Controllers
         [Route("Logout")]
         public async Task<IActionResult> Logout()
         {
-            UserSingleton.Instance.InitializeValues(
-                null!,
-                null!,
-                null!,
-                null!,
-                null!,
-                null!,
-                null!,
-                null!,
-                false);
+            var response = await _httpClient.GetAsync($"/Subjects/ClearDictionaries");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return View("Error");
+            }
+
+            UserSingleton.Instance.InitializeValues(null!, null!, null!, null!, null!, null!, null!, null!, false);
 
             return RedirectToAction("Index", "Home");
         }

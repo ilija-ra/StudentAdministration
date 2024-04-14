@@ -7,7 +7,7 @@ namespace StudentAdministration.Communication.Subjects
     {
         Task<SubjectEnrollResponseModel> Enroll(SubjectEnrollRequestModel? model);
 
-        Task<SubjectGetAllEnrolledResponseModel> GetAllEnrolled(string? studentId);
+        Task<SubjectGetAllEnrolledResponseModel> GetAllEnrolled(string? studentId, bool? dropOut);
 
         Task<SubjectDropOutResponseModel> DropOut(SubjectDropOutRequestModel model);
 
@@ -20,5 +20,7 @@ namespace StudentAdministration.Communication.Subjects
         Task<SubjectGetAllResponseModel> GetAll();
 
         Task<SubjectConfirmSubjectsResponseModel> ConfirmSubjects(string? studentId);
+
+        Task ClearDictionaries();
     }
 }

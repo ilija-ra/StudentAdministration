@@ -42,11 +42,11 @@ namespace StudentAdministration.Api.Controllers
 
         [Authorize(Policy = IdentityData.RequireStudentRole)]
         [HttpGet]
-        [Route("GetAllEnrolled/{studentId}")]
-        public async Task<IActionResult> GetAllEnrolled(string studentId)
+        [Route("GetAllEnrolled/{studentId}/{dropOut}")]
+        public async Task<IActionResult> GetAllEnrolled(string studentId, bool? dropOut = false)
         {
             var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
-            var result = await subjectProxy.GetAllEnrolled(studentId);
+            var result = await subjectProxy.GetAllEnrolled(studentId, dropOut);
 
             if (result is null)
             {
@@ -166,6 +166,16 @@ namespace StudentAdministration.Api.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("ClearDictionaries")]
+        public async Task<IActionResult> ClearDictionary()
+        {
+            var subjectProxy = ServiceProxy.Create<ISubject>(new Uri("fabric:/StudentAdministration/StudentAdministration.Subject"), await getAvailablePartitionKey());
+            await subjectProxy.ClearDictionaries();
+
+            return Ok();
         }
 
         private async Task<ServicePartitionKey> getAvailablePartitionKey()

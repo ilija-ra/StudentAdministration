@@ -29,6 +29,7 @@ namespace StudentAdministration.Client.Models.Subjects
         [Display(Name = "Student full name")]
         public string? StudentFullName { get; set; }
 
+        [Range(5, 10, ErrorMessage = "Grade must be between 5 and 10")]
         public int? Grade { get; set; }
     }
 }

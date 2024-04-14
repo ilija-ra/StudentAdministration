@@ -36,6 +36,12 @@ namespace Client.Controllers
                 return View("Error");
             }
 
+            if (result.AverageGrade == 0 && result.Subjects?.Count() == 0)
+            {
+                TempData["ErrorMessage"] = "You have no passed subjects yet";
+                return RedirectToAction("UserProfile", "Users");
+            }
+
             return GeneratePdfReport(result);
         }
 

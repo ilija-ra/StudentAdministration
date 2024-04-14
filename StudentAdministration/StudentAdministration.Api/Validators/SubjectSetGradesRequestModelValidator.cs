@@ -21,7 +21,7 @@ namespace StudentAdministration.Api.Validators
 
             RuleFor(x => x.Grade)
                 .NotNull().WithMessage("Grade is required")
-                .GreaterThanOrEqualTo(0).WithMessage("Grade must be a positive integer");
+                .InclusiveBetween(5, 10).WithMessage("Grade must be between 5 and 10");
         }
     }
 }
