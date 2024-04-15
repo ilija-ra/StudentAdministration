@@ -3,3 +3,4 @@ System Design:
 
 Utilized API Gateway pattern:
 ![image](https://github.com/ilija-ra/StudentAdministration/assets/142634452/b881317a-deac-4339-843f-a6a86bbf52d7)
+![image](https://github.com/ilija-ra/StudentAdministration/assets/142634452/326fc8db-d94f-4fb1-b3b4-73ebe2e0ace9)
