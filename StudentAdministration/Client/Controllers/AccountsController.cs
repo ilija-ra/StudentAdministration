@@ -20,8 +20,15 @@ namespace Client.Controllers
 
         [HttpGet]
         [Route("Login")]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            var response = await _httpClient.GetAsync($"/Subjects/ClearDictionaries");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return View("Error");
+            }
+
             return View();
         }
 
@@ -89,7 +96,9 @@ namespace Client.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                TempData["ErrorMessage"] = "Error occured during registration process!";
+                TempData["ErrorMessage"] = "User with entered email or index already exist!";
+
+                return View();
             }
 
             TempData["SuccessfulMessage"] = "Registered successfully!";

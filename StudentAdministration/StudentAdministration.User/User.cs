@@ -57,7 +57,7 @@ namespace StudentAdministration.User
         {
             try
             {
-                var query = _tableClient.QueryAsync<UserEntity>(x => x.EmailAddress == model!.EmailAddress);
+                var query = _tableClient.QueryAsync<UserEntity>(x => x.EmailAddress == model!.EmailAddress || x.Index == model.Index);
                 var user = query?.ToBlockingEnumerable().FirstOrDefault();
 
                 if (user != null)

@@ -168,6 +168,7 @@ namespace StudentAdministration.Api.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("ClearDictionaries")]
         public async Task<IActionResult> ClearDictionary()

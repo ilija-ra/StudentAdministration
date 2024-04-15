@@ -3,7 +3,7 @@
   <Parameters>
     <Parameter Name="StudentAdministration.Report_InstanceCount" Value="1" />
     <Parameter Name="Client_InstanceCount" Value="1" />
-    <Parameter Name="StudentAdministration.Subject_PartitionCount" Value="1" />
+    <Parameter Name="StudentAdministration.Subject_PartitionCount" Value="3" />
     <Parameter Name="StudentAdministration.Subject_MinReplicaSetSize" Value="3" />
     <Parameter Name="StudentAdministration.Subject_TargetReplicaSetSize" Value="3" />
     <Parameter Name="StudentAdministration.User_InstanceCount" Value="1" />

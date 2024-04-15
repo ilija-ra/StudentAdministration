@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace Client.Controllers
 {
-    [Route("Home")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -14,7 +13,7 @@ namespace Client.Controllers
             _logger = logger;
         }
 
-        [Route("Index")]
+        [Route("/")]
         public async Task<IActionResult> Index()
         {
             return View();
